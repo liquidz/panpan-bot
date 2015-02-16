@@ -6,7 +6,7 @@ A Clojure library designed to ... well, that part is up to you.
 
 ```
 beco -i -c heroku /heroku_login.sh
-beco heroku apps:create panpanbot
+beco heroku apps:create panpan-bot
 beco heroku addons:add rediscloud
 beco -c heroku git push heroku master
 
