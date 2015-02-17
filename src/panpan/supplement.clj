@@ -38,5 +38,5 @@
     #(if-let [x (brain/get SNOOZE_KEY)]
        (->> SUPPLEMENT_REMINDER_TEXTS
             rand-nth
-            (str "uochan ")
+            (str "uochan: ")
             adapter/out))))
