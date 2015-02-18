@@ -1,6 +1,6 @@
 # panpan-bot
 
-A Clojure library designed to ... well, that part is up to you.
+[![Circle CI](https://circleci.com/gh/liquidz/panpan-bot/tree/master.svg?style=svg)](https://circleci.com/gh/liquidz/panpan-bot/tree/master) [![Dependency Status](https://www.versioneye.com/user/projects/54e408a2d1ec5734f400023d/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54e408a2d1ec5734f400023d)
 
 ## Usage
 
