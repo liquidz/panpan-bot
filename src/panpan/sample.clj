@@ -10,5 +10,5 @@
 
 (def brain-handler
   (handler/regexp
-    #"^set (.+?) (.+?)$" (fn [{[_ k v] :match}] (brain/set k v))
+    #"^set (.+?) (.+?)$" (fn [{[_ k v] :match}] (brain/set k v) "OK")
     #"^get (.+?)$"       (fn [{[_ k]   :match}] (brain/get k))))
