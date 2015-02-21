@@ -14,7 +14,10 @@
   ["思い出して" "覚えてる？" "忘れてない？" "そういえば" "これどうするの？"])
 (def ^:const REMIND_SCHEDULE "0 30 7,12,18,20 * * * *")
 
-(def memo-handler
+(def ^{:doc (str "p メモ 消して   - メモを消す\n"
+                 "p メモ 何だっけ - メモを確認する\n"
+                 "p メモ <string> - メモを保存する")}
+  memo-handler
   (handler/regexp
     #"^メモ (消して|けして|削除|忘れて|忘れて)"
       (fn [_]

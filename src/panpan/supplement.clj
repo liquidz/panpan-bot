@@ -15,7 +15,9 @@
 (def ^:const SUPPLEMENT_SKIP_TEXTS
   ["えっ？お、おｋ" "やるな" "そんな馬鹿な。。" "流石" "マジか、、"])
 
-(def supplement-handler
+(def ^{:doc (str "p もう飲んだ - 指摘される前にこれを言うと、その日は指摘されなくなる\n"
+                 "p 飲んだ - 指摘後に言うと、指摘が止まる")}
+  supplement-handler
   (handler/regexp
     #"もう.*(飲んだ|のんだ|飲んじゃった|のんじゃった)"
     (fn [{user :user}]

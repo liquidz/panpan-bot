@@ -4,7 +4,8 @@
     [jubot.scheduler :as scheduler]
     [jubot.brain     :as brain]))
 
-(def persona-handler
+(def ^{:doc (str "p 何食べたい？ - 食べたいものを決めてもらう")}
+  persona-handler
   (handler/regexp
     #"ぬるぽ"
       (constantly "ガッ")
