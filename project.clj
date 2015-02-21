@@ -6,6 +6,7 @@
 
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/tools.namespace "0.2.9"]
+                 [clj-http-lite "0.2.1"]
                  [jubot "0.0.1-SNAPSHOT-9"]]
 
   :uberjar-name "panpan-standalone.jar"
