@@ -29,14 +29,13 @@
        (re-find #"<title>jubot (.+?) - Clojars</title>")
        second))
 
-(defn latest-jubot-document?
-  []
-  (let [dv (get-jubot-document-version)
-        jv (get-jubot-core-version)]
-    (= dv jv)))
-
 (def jubot-document-version-check-schedule
   (scheduler/schedules
-    "0 0 * * * * *" 
-    #(when-not (latest-jubot-document?)
-      (adapter/out (str "uochan " (rand-nth MESSAGES))))))
+    "0 0 20,21,22 * * * *"
+    #(let [dv (get-jubot-document-version)
+           jv (get-jubot-core-version)]
+       (when (not= dv jv)
+         (adapter/out
+           (str "uochan " (rand-nth MESSAGES) "\n"
+                "  ドキュメントのバージョン: " dv "\n"
+                "  jubot本体のバージョン   : " jv))))))
