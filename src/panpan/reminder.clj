@@ -5,11 +5,13 @@
 
 (def remind-schedule
   (scheduler/schedules
-    "0 25 18 6 * * *"
+    "0 28 18 6 * * *"
     #(adapter/out "青空レストラン始まるよ")
 
-    "0 55 18 7 * * *"
-    #(adapter/out "鉄腕ダッシュ始まるよ")
-    ))
+    "0 58 16 7 * * *"
+    #(adapter/out "七つの大罪始まるよ")
+
+    "0 58 18 7 * * *"
+    #(adapter/out "鉄腕ダッシュ始まるよ")))
 
 
