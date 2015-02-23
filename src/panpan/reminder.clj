@@ -5,9 +5,6 @@
 
 (def remind-schedule
   (scheduler/schedules
-    "0 5 12 * * * *"
-    #(adapter/out "uochan 住所確認した？")
-
     "0 28 18 6 * * *"
     #(adapter/out "青空レストラン始まるよ")
 
