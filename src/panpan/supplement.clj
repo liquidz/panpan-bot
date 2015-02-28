@@ -30,7 +30,7 @@
 
 (def supplement-schedule
   (scheduler/schedules
-    "0 13 21 * * * *"
+    "0 0 22 * * * *"
     #(if-let [x (brain/get SNOOZE_SKIP_KEY)]
        (brain/set SNOOZE_SKIP_KEY nil)
        (brain/set SNOOZE_KEY "true"))
