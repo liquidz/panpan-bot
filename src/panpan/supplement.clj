@@ -1,6 +1,5 @@
 (ns panpan.supplement
   (:require
-    [jubot.adapter   :as adapter]
     [jubot.handler   :as handler]
     [jubot.scheduler :as scheduler]
     [jubot.brain     :as brain]))
@@ -40,5 +39,4 @@
     #(if-let [x (brain/get SNOOZE_KEY)]
        (->> SUPPLEMENT_REMINDER_TEXTS
             rand-nth
-            (str "uochan: ")
-            adapter/out))))
+            (str "uochan: ")))))

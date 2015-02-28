@@ -1,6 +1,5 @@
 (ns panpan.jubot-doc
   (:require
-    [jubot.adapter :as adapter]
     [jubot.scheduler :as scheduler]
     [clj-http.lite.client :as client]))
 
@@ -35,7 +34,6 @@
     #(let [dv (get-jubot-document-version)
            jv (get-jubot-core-version)]
        (when (not= dv jv)
-         (adapter/out
-           (str "uochan " (rand-nth MESSAGES) "\n"
-                "  ドキュメントのバージョン: " dv "\n"
-                "  jubot本体のバージョン   : " jv))))))
+         (str "uochan " (rand-nth MESSAGES) "\n"
+              "  ドキュメントのバージョン: " dv "\n"
+              "  jubot本体のバージョン   : " jv)))))

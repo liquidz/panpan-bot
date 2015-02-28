@@ -1,7 +1,6 @@
 (ns panpan.memo
   (:require
     [jubot.handler   :as handler]
-    [jubot.adapter   :as adapter]
     [jubot.scheduler :as scheduler]
     [jubot.brain     :as brain]))
 
@@ -38,4 +37,4 @@
   (scheduler/schedules
     REMIND_SCHEDULE
       #(when-let [x (brain/get MEMO_KEY)]
-         (adapter/out (str (rand-nth REMINDER_TEXTS) ": " x)))))
+         (str (rand-nth REMINDER_TEXTS) ": " x))))
