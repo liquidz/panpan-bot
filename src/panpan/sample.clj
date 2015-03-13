@@ -5,6 +5,7 @@
     [jubot.brain     :as brain]))
 
 (defn ping-handler
+  "p ping - pong"
   [{text :text}]
   (if (= text "ping") "pong"))
 

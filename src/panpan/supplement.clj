@@ -28,7 +28,7 @@
       (brain/set SNOOZE_KEY nil)
       (rand-nth SUPPLEMENT_OK_TEXTS))))
 
-(def supplement-schedule
+#_(def supplement-schedule
   (scheduler/schedules
     "0 0 22 * * * *"
     #(do (if-let [x (brain/get SNOOZE_SKIP_KEY)]

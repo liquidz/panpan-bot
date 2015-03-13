@@ -1,7 +1,7 @@
 (ns panpan.jubot-doc
   (:require
     [jubot.scheduler :as scheduler]
-    [clj-http.lite.client :as client]))
+    [clj-http.client :as client]))
 
 (def ^:const DOCUMENT_URL
   "http://liquidz.github.io/jubot/api/index.html")

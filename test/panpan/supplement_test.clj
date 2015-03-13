@@ -18,7 +18,7 @@
         (is (some? (f "飲んだ")))
         (is (nil? (jb/get SNOOZE_KEY)))))))
 
-(deftest test-supplement-schedule
+#_(deftest test-supplement-schedule
   (let [[start remind] supplement-schedule]
     (testing "事前にもう飲んだしておけばリマインドがキャンセルされること"
       (with-test-brain
