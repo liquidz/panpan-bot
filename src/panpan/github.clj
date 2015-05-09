@@ -2,6 +2,10 @@
   (:require
     [jubot.handler :as handler]))
 
+(defn debug-handler
+  [{:keys [user to text]}]
+  (str "DEBUG: user=[" user "], to=[" to "], text=[" text "]"))
+
 (defn github-handler
   ""
   [{:keys [user text] :as arg}]
