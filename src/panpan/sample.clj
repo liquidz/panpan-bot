@@ -6,10 +6,12 @@
 
 (defn ping-handler
   "p ping - pong"
-  [{text :text}]
-  (if (= text "ping") "pong"))
+  [{:keys [text message-for-me?]}]
+  (when (and message-for-me? (= text "ping")) "pong"))
 
-(def brain-handler
-  (handler/regexp
-    #"^set (.+?) (.+?)$" (fn [{[_ k v] :match}] (brain/set k v) "OK")
-    #"^get (.+?)$"       (fn [{[_ k]   :match}] (brain/get k))))
+(defn brain-handler
+  [{:keys [message-for-me?] :as arg}]
+  (when message-for-me?
+    (handler/regexp arg
+      #"^set (.+?) (.+?)$" (fn [{[_ k v] :match}] (brain/set k v) "OK")
+      #"^get (.+?)$"       (fn [{[_ k]   :match}] (brain/get k)))))

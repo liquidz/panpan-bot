@@ -7,8 +7,7 @@
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/tools.namespace "0.2.10"]
                  [clj-http "1.0.1"]
-                 ;[jubot "0.0.2-SNAPSHOT"]]
-                 [jubot "0.0.1"]]
+                 [jubot "0.1.0"]]
 
   :uberjar-name "panpan-standalone.jar"
   :min-lein-version "2.0.0"

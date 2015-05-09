@@ -4,14 +4,17 @@
     [jubot.test :refer :all]
     [clojure.test :refer :all]))
 
+(def ping-handler* #(ping-handler (merge {:message-for-me? true} %)))
+(def brain-handler* #(brain-handler (merge {:message-for-me? true} %)))
+
 (deftest test-ping-handler
-  (are [x y] (= x (ping-handler y))
+  (are [x y] (= x (ping-handler* y))
     nil    {}
     "pong" {:text "ping"}))
 
 (deftest test-brain-handler
   (with-test-brain
-    (are [x y] (= x (brain-handler y))
+    (are [x y] (= x (brain-handler* y))
       nil   {}
       "OK"  {:text "set foo bar"}
       "bar" {:text "get foo"}
