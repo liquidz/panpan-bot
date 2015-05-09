@@ -4,9 +4,10 @@
 
 (defn github-handler
   ""
-  [{:keys [user] :as arg}]
-  (when (or true (= "github" user))
-    (handler/regexp
+  [{:keys [user text] :as arg}]
+  (when (= "github" user)
+    (str "DEBUG:\"" text "\"")
+    #_(handler/regexp
       arg
       #"(?s)^\[(.+?)\].+Issue created.+(#\d+)"
       (fn [{[_ repo issue] :match}]
