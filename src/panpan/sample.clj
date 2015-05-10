@@ -1,5 +1,6 @@
 (ns panpan.sample
   (:require
+    [clojure.string  :as str]
     [jubot.handler   :as handler]
     [jubot.scheduler :as scheduler]
     [jubot.brain     :as brain]))
@@ -14,4 +15,9 @@
   (when message-for-me?
     (handler/regexp arg
       #"^set (.+?) (.+?)$" (fn [{[_ k v] :match}] (brain/set k v) "OK")
-      #"^get (.+?)$"       (fn [{[_ k]   :match}] (brain/get k)))))
+      #"^get (.+?)$"       (fn [{[_ k]   :match}] (brain/get k))
+      #"^keys$"            (fn [& _]
+                             (->> (brain/keys)
+                                  (map #(str " * " %))
+                                  (concat ["Keys:"])
+                                  (str/join "\n"))))))

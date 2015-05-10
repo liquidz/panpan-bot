@@ -23,6 +23,11 @@
           (is (= 0 (count (get-unread-feeds url))))
 
           (jb/set url (-> feeds (nth 3) :id))
-          (is (= 3 (count (get-unread-feeds url)))))))))
+          (is (= 3 (count (get-unread-feeds url)))))
+        (testing "取得済みのフィードがない場合は最新IDが更新されないこと"
+          (jb/set url nil)
+          (get-unread-feeds url)
+          (get-unread-feeds url)
+          (is (= (-> feeds first :id) (jb/get url))))))))
 
 

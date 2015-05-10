@@ -24,7 +24,8 @@
         unreads (->> (xml-> data :entry)
                      (take-while #(not= lid (xml1-> % :id text)))
                      (map parse-entry))]
-    (set-latest-atom-id url (-> unreads first :id))
+    (when-let [id (-> unreads first :id)]
+      (set-latest-atom-id url id))
     unreads))
 
 ;(def sample-url "https://github.com/liquidz.atom")
