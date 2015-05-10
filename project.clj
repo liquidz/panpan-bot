@@ -6,11 +6,15 @@
 
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [org.clojure/tools.namespace "0.2.10"]
+                 [org.clojure/data.zip "0.1.1"]
                  [clj-http "1.0.1"]
                  [jubot "0.1.0"]]
 
   :uberjar-name "panpan-standalone.jar"
   :min-lein-version "2.0.0"
-  :profiles {:dev {:source-paths ["dev"]}}
+  :profiles {:dev {:dependencies
+                   [[org.clojars.runa/conjure "2.2.0"]]
+                   :source-paths ["dev"]
+                   }}
 
   :aliases {"dev" ["run" "-m" "panpan.core/-main"]})
