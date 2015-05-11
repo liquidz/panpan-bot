@@ -7,7 +7,7 @@
     [panpan.util.rss :as rss]))
 
 (def ^:const SCHEDULE "0 /1 * * * * *")
-(def ^:const NAME "エイナ(ギルド)")
+(def ^:const NAME "エイナ")
 (def ^:const RSS_URL "https://github.com/liquidz.atom")
 (def ^:const ICON "https://dl.dropboxusercontent.com/u/14918307/slack_icon/eina.png")
 (def ^:private out #(do (ja/out (apply str %&) :as NAME :icon-url ICON) nil))
