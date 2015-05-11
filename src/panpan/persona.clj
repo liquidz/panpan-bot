@@ -51,7 +51,7 @@
       #".+"
       (fn [& _]
         (when-let [res (some-> api-key
-                               (dd/talk text {:t 30
+                               (dd/talk text {;:t 30
                                               :context (brain/get CONTEXT_KEY)}))]
           (brain/set CONTEXT_KEY (:context res))
           (:utt res))))))
