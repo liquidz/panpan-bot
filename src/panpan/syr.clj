@@ -29,6 +29,8 @@
    })
 
 (defn syr-handler
+  "シル(さん)?.+(vim|Vim) - Vim の最新バージョンをチェック
+  "
   [{:keys [user] :as arg}]
   (jh/regexp arg
     #"シル(さん)?.+ありがと"

@@ -49,6 +49,7 @@
               out)))
 
 (defn eina-handler
+  "エイナ(さん)?.+github.+テスト - github rss 取得のテスト"
   [{:keys [text]}]
   (when (re-find #"エイナ(さん)?.+github.+テスト" text)
     (jb/set rss/RSS_URL nil)

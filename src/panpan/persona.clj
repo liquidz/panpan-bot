@@ -34,6 +34,12 @@
                  "竹" "笹" "タケノコ" "豆腐" "オムライス"]))))
 
 (defn panpan-handler
+  "p ping        - pong
+   p set KEY VAL - brain に情報を登録
+   p get KEY     - brain から情報を取得
+   p brain       - brain の KEY/VALUE 一覧
+   p 文字列      - 会話
+  "
   [{:keys [text message-for-me?] :as arg}]
   (when message-for-me?
     (handler/regexp arg
@@ -41,7 +47,7 @@
       #"^set (.+?) (.+?)$" (fn [{[_ k v] :match}] (brain/set k v) "OK")
       #"^get (.+?)$"       (fn [{[_ k]   :match}] (brain/get k))
       #"^brain$"           brain-key-values
-      #".+"
+      #"^(?!.*help).+"
       (fn [& _]
         (let [opt {:context (brain/get CONTEXT_KEY)}
               res (some-> api-key (dd/talk text opt))]

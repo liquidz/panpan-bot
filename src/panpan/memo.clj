@@ -14,9 +14,10 @@
 (def ^:const REMIND_SCHEDULE "0 30 7,12,18,20 * * * *")
 
 (defn memo-handler
-  "p メモ 消して   - メモを消す
-   p メモ 何だっけ - メモを確認する
-   p メモ <string> - メモを保存する"
+  "メモ 消して   - メモを消す
+   メモ 何だっけ - メモを確認する
+   メモ <string> - メモを保存する
+  "
   [arg]
   (handler/regexp arg
     #"^メモ (消して|けして|削除|忘れて|忘れて)"
