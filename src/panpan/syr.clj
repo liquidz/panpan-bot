@@ -1,16 +1,12 @@
-(ns panpan.vim
+(ns panpan.syr
   (:require
-    [clojure.string  :as str]
-    [clj-http.client :as client]
-    [jubot.adapter   :as ja]
-    [jubot.brain     :as jb]
-    [jubot.scheduler :as js]
-    [jubot.handler   :as jh]))
+    [jubot.adapter      :as ja]
+    [jubot.scheduler    :as js]
+    [jubot.handler      :as jh]
+    [panpan.vim.version :refer :all]))
 
 (def ^:const NAME "シル")
 (def ^:const ICON "https://dl.dropboxusercontent.com/u/14918307/slack_icon/syr.png")
-(def ^:const URL  "http://ftp.vim.org/pub/vim/patches/7.4/README")
-(def ^:const KEY  "vim-patch")
 (def ^:private out #(do (ja/out (apply str %&) :as NAME :icon-url ICON) nil))
 
 (def ^:const MESSAGES
@@ -32,34 +28,22 @@
     ]
    })
 
-(defn get-latest-patch
-  []
-  (-> URL client/get :body str/split-lines last str/trim
-      (str/split #"\s+" 3)))
-
-(defn check-vim-version
-  [& {:keys [user else?]}]
-  (let [[_ version message] (get-latest-patch)
-        last-version        (jb/get KEY)]
-    (if (not= version last-version)
-      (do (jb/set KEY version)
-          (out (if user (str "@" user " ") "")
-               (-> MESSAGES :new-version rand-nth)
-               "\n" version ": " message))
-      (when else?
-        (out (if user (str "@" user " ") "")
-             (-> MESSAGES :no-new-version rand-nth))))))
-
-(defn vim-version-handler
+(defn syr-handler
   [{:keys [user] :as arg}]
   (jh/regexp arg
     #"シル(さん)?.+ありがと"
     (fn [& _] (->> MESSAGES :response rand-nth (out "@" user " ")))
 
     #"シル(さん)?.+(vim|Vim)"
-    (fn [& _] (check-vim-version :user user :else? true))))
+    (fn [& _]
+      (->> (if (:latest? (check-vim-version)) :new-version :no-new-version)
+           (get MESSAGES)
+           rand-nth
+           (out "@" user " ")))))
 
-(def vim-version-check-schedule
+(def syr-schedule
   (js/schedules
+    ;; vim-version check
     "0 0 10,13,16,19,22 * * * *"
-    check-vim-version))
+    #(when (:latest? (check-vim-version))
+       (-> MESSAGES :new-version rand-nth out))))
