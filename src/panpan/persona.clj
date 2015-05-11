@@ -1,11 +1,26 @@
 (ns panpan.persona
   (:require
+    [clojure.string  :as str]
     [jubot.handler   :as handler]
     [jubot.brain     :as brain]
     [clj-docomo-dialogue.core :as dd]))
 
 (def ^:const CONTEXT_KEY "docomo_dialogue_context")
 (def ^:private api-key (System/getenv "DOCOMO_API_KEY"))
+
+(defn- brain-key-values
+  [& _]
+  (let [ks          (brain/keys)
+        key-max-len (apply max (map count ks))
+        make-spaces #(str/join "" (repeat (- key-max-len (count %)) " "))]
+    (->> ks
+         (reduce
+           (fn [res k]
+             (conj res (str " * " k (make-spaces k) " : " (brain/get k))))
+           [])
+         (str/join "\n")
+         (str "Key/Value\n"))))
+
 
 (defn persona-hear-handler
   [{:keys [user] :as arg}]
@@ -29,6 +44,10 @@
   [{:keys [text message-for-me?] :as arg}]
   (when message-for-me?
     (handler/regexp arg
+      #"ping" (constantly "pong")
+      #"^set (.+?) (.+?)$" (fn [{[_ k v] :match}] (brain/set k v) "OK")
+      #"^get (.+?)$"       (fn [{[_ k]   :match}] (brain/get k))
+      #"^brain$"           brain-key-values
       #".+"
       (fn [& _]
         (when-let [res (some-> api-key
