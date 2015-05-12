@@ -33,10 +33,10 @@
   "
   [{:keys [user] :as arg}]
   (jh/regexp arg
-    #"シル(さん)?.+ありがと"
+    #"シル(さん)?.*ありがと"
     (fn [& _] (->> MESSAGES :response rand-nth (out "@" user " ")))
 
-    #"シル(さん)?.+(vim|Vim)"
+    #"シル(さん)?.*(vim|Vim)"
     (fn [& _]
       (->> (if (:latest? (check-vim-version)) :new-version :no-new-version)
            (get MESSAGES)
