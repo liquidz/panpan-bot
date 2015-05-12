@@ -34,6 +34,10 @@
              {:event      :merge-pull-request
               :repository repo
               :issue      issue})
+    #"created repository (.+)$"
+    (matchfn [repo]
+             {:event      :new-repository
+              :repository repo})
     #"created branch (.+) at (.+)$"
     (matchfn [branch repo]
              {:event      :new-branch
