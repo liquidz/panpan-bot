@@ -1,5 +1,6 @@
 (ns panpan.eina
   (:require
+    [clojure.string    :as str]
     [panpan.github.rss :as rss]
     [jubot.adapter     :as ja]
     [jubot.scheduler   :as js]
@@ -10,6 +11,7 @@
 (def ^:const NAME "エイナ")
 (def ^:const ICON "https://dl.dropboxusercontent.com/u/14918307/slack_icon/eina.png")
 (def ^:private out #(do (ja/out (apply str %&) :as NAME :icon-url ICON) nil))
+(def ^:private pre #(str "```\n" % "\n```"))
 
 (def ^:const MESSAGES
   {:open-pull-request
@@ -50,12 +52,17 @@
 
 (defn eina-handler
   "エイナ(さん)?.+github.+テスト - github rss 取得のテスト"
-  [{:keys [text]}]
-  (when (re-find #"エイナ(さん)?.+github.+テスト" text)
-    (jb/set rss/RSS_URL nil)
-    (doseq [feed (rss/get-github-feeds)]
-      (out (rss/github-respond feed)))
+  [{:keys [user] :as arg}]
+  (jh/regexp arg
+    #"エイナ(さん)?.+github.*テスト"
+    (fn [& _]
+      (out "@" user " はーい")
+      (jb/set rss/RSS_URL nil)
+      (->> (rss/get-github-feeds)
+           (map rss/github-respond)
+           (str/join "\n")
+           pre
+           out)
 
-    (jb/set rss/RSS_URL nil)
-    ((first github-schedule))))
-
+      (jb/set rss/RSS_URL nil)
+      ((first github-schedule)))))
