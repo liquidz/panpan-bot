@@ -25,12 +25,12 @@
   "
   [{:keys [user] :as arg}]
   (jh/regexp arg
-    #"リリ.+jubot.+テスト"
-    (fn [& _] (out "@" user " 了解です\n"
-                   " * document: " (get-jubot-document-version)
-                   "\n"
-                   " * core    : " (get-jubot-core-version)
-                   "\n"))
+    #"リリ.*jubot.+テスト"
+    (fn [& _]
+      (out "@" user " 了解です")
+      (out "```\n"
+           "document: " (get-jubot-document-version) "\n"
+           "core    : " (get-jubot-core-version) "\n```"))
     #"リリ.*ありがと"
     (fn [& _] (->> MESSAGES :response rand-nth (out "@" user " ")))))
 
