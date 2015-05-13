@@ -41,6 +41,10 @@
    ["ありがとう。助かったわ"
     "ミッション、本当にお疲れ様"
     ]
+   :thanks
+   ["いーえ(^^)"
+    "どういたしまして(^^)"
+    ]
    :reply
    ["はーい"
     "ちょっと待ってね"
@@ -62,6 +66,9 @@
   "
   [{:keys [user] :as arg}]
   (jh/regexp arg
+    #"エイナ(さん)?.*ありがと"
+    (fn [& _]
+      (->> MESSAGES :thanks rand-nth (out "@" user " ")))
     #"エイナ(さん)?.*クエスト.*(教えて|おしえて)"
     (fn [& _]
       (->> MESSAGES :reply rand-nth (out "@" user " "))
