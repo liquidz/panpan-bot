@@ -17,7 +17,7 @@
    ["jubot のテンプレートが古いみたいです"
     "jubot のテンプレート古くないですか？"
     ]
-   :response
+   :thanks
    ["どういたしまして！"
     "滅相もないです"
     "サポーターですから！"
@@ -38,7 +38,7 @@
            "template: " (get-jubot-template-version) "\n"
            "```"))
     #"リリ.*ありがと"
-    (fn [& _] (->> MESSAGES :response rand-nth (out "@" user " ")))))
+    (fn [& _] (->> MESSAGES :thanks rand-nth (out "@" user " ")))))
 
 (def liliruca-schedule
   (js/schedules

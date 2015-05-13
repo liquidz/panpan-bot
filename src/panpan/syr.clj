@@ -20,7 +20,7 @@
     "ごめんなさい。新しいパッチないです"
     "んー、特に新しいパッチはないですね"
     ]
-   :response
+   :thanks
    ["どういたしまして(^^)"
     "いえいえ(^^)"
     "役に立ったなら良かったです！"
@@ -34,7 +34,7 @@
   [{:keys [user] :as arg}]
   (jh/regexp arg
     #"シル(さん)?.*ありがと"
-    (fn [& _] (->> MESSAGES :response rand-nth (out "@" user " ")))
+    (fn [& _] (->> MESSAGES :thanks rand-nth (out "@" user " ")))
 
     #"シル(さん)?.*(vim|Vim)"
     (fn [& _]
