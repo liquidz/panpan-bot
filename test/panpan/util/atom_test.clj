@@ -1,6 +1,6 @@
-(ns panpan.util.rss-test
+(ns panpan.util.atom-test
   (:require
-    [panpan.util.rss :refer :all]
+    [panpan.util.atom :refer :all]
     [clojure.java.io :as io]
     [clojure.test    :refer :all]
     [clojure.xml     :as xml]

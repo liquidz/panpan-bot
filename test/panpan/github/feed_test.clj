@@ -1,7 +1,7 @@
-(ns panpan.github.rss-test
+(ns panpan.github.feed-test
   (:require
-    [clojure.test      :refer :all]
-    [panpan.github.rss :refer :all]))
+    [clojure.test       :refer :all]
+    [panpan.github.feed :refer :all]))
 
 (deftest github-respond-test
   (are [x y] (= x (:event (github-respond {:title y})))

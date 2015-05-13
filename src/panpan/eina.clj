@@ -1,11 +1,11 @@
 (ns panpan.eina
   (:require
-    [clojure.string    :as str]
-    [panpan.github.rss :as rss]
-    [jubot.adapter     :as ja]
-    [jubot.scheduler   :as js]
-    [jubot.handler     :as jh]
-    [jubot.brain       :as jb]))
+    [clojure.string     :as str]
+    [panpan.github.feed :as feed]
+    [jubot.adapter      :as ja]
+    [jubot.scheduler    :as js]
+    [jubot.handler      :as jh]
+    [jubot.brain        :as jb]))
 
 (def ^:const SCHEDULE "0 /1 * * * * *")
 (def ^:const NAME "エイナ")
@@ -44,7 +44,7 @@
 (def github-schedule
   (js/schedules
     SCHEDULE
-    #(some->> (rss/get-github-event)
+    #(some->> (feed/get-github-event)
               :event
               (get MESSAGES)
               rand-nth
@@ -57,12 +57,12 @@
     #"エイナ(さん)?.+github.*テスト"
     (fn [& _]
       (out "@" user " はーい")
-      (jb/set rss/RSS_URL nil)
-      (->> (rss/get-github-feeds)
-           (map rss/github-respond)
+      (jb/set feed/FEED_URL nil)
+      (->> (feed/get-github-feeds)
+           (map feed/github-respond)
            (str/join "\n")
            pre
            out)
 
-      (jb/set rss/RSS_URL nil)
+      (jb/set feed/FEED_URL nil)
       ((first github-schedule)))))

@@ -1,4 +1,4 @@
-(ns panpan.util.rss
+(ns panpan.util.atom
   (:require
     [clojure.data.zip.xml :refer :all]
     [clojure.xml          :as xml]

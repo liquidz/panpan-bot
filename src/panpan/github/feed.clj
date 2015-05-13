@@ -1,10 +1,10 @@
-(ns panpan.github.rss
+(ns panpan.github.feed
   (:require
     [panpan.util.match :refer :all]
-    [panpan.util.rss   :as rss]
+    [panpan.util.atom  :as atom]
     [jubot.handler     :as jh]))
 
-(def ^:const RSS_URL "https://github.com/liquidz.atom")
+(def ^:const FEED_URL "https://github.com/liquidz.atom")
 
 (defn github-respond
   [{:keys [title]}]
@@ -56,7 +56,7 @@
 
 (defn get-github-feeds
   []
-  (rss/get-unread-feeds RSS_URL))
+  (atom/get-unread-feeds FEED_URL))
 
 (defn get-github-event
   []
