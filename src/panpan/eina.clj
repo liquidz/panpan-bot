@@ -1,11 +1,12 @@
 (ns panpan.eina
   (:require
-    [clojure.string     :as str]
-    [panpan.github.feed :as feed]
-    [jubot.adapter      :as ja]
-    [jubot.scheduler    :as js]
-    [jubot.handler      :as jh]
-    [jubot.brain        :as jb]))
+    [clojure.string       :as str]
+    [panpan.github.feed   :as feed]
+    [panpan.github.search :as search]
+    [jubot.adapter        :as ja]
+    [jubot.scheduler      :as js]
+    [jubot.handler        :as jh]
+    [jubot.brain          :as jb]))
 
 (def ^:const SCHEDULE "0 /1 * * * * *")
 (def ^:const NAME "エイナ")
@@ -39,7 +40,12 @@
    :close-issue
    ["ありがとう。助かったわ"
     "ミッション、本当にお疲れ様"
-    ]})
+    ]
+   :reply
+   ["はーい"
+    "ちょっと待ってね"
+    ]
+   })
 
 (def github-schedule
   (js/schedules
@@ -51,12 +57,21 @@
               out)))
 
 (defn eina-handler
-  "エイナ(さん)?.+github.+テスト - github rss 取得のテスト"
+  "エイナ(さん)?.*クエスト.*(教えて|おしえて) - github のクエスト一覧
+   エイナ(さん)?.*github.*テスト              - github rss 取得のテスト
+  "
   [{:keys [user] :as arg}]
   (jh/regexp arg
-    #"エイナ(さん)?.+github.*テスト"
+    #"エイナ(さん)?.*クエスト.*(教えて|おしえて)"
     (fn [& _]
-      (out "@" user " はーい")
+      (->> MESSAGES :reply rand-nth (out "@" user " "))
+      (->> (search/get-assigned-issues "liquidz" :state "open")
+           (map #(str " * <" (:url %) "|" (:title %) ">"))
+           (str/join "\n")
+           out))
+    #"エイナ(さん)?.*github.*テスト"
+    (fn [& _]
+      (->> MESSAGES :reply rand-nth (out "@" user " "))
       (jb/set feed/FEED_URL nil)
       (->> (feed/get-github-feeds)
            (map feed/github-respond)
@@ -66,3 +81,4 @@
 
       (jb/set feed/FEED_URL nil)
       ((first github-schedule)))))
+
