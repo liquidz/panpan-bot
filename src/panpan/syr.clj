@@ -3,7 +3,7 @@
     [jubot.adapter      :as ja]
     [jubot.scheduler    :as js]
     [jubot.handler      :as jh]
-    [panpan.vim.version :refer :all]))
+    [panpan.vim.version :as vv]))
 
 (def ^:const NAME "シル")
 (def ^:const ICON "https://dl.dropboxusercontent.com/u/14918307/slack_icon/syr.png")
@@ -26,7 +26,20 @@
     "役に立ったなら良かったです！"
     "お役に立ててなりよりです！"
     ]
+   :reply
+   ["ちょっと待ってくださいね"
+    "少々お待ちください〜"
+    ]
    })
+
+(defn- generate-message
+  []
+  (let [res (vv/check-vim-version)]
+    (when (:latest? res)
+      (str "```\n"
+           "Version: " (:version res) "\n"
+           "Message: " (:message res) "\n"
+           "```"))))
 
 (defn syr-handler
   "シル(さん)?.+(vim|Vim) - Vim の最新バージョンをチェック
@@ -36,16 +49,15 @@
     #"シル(さん)?.*ありがと"
     (fn [& _] (->> MESSAGES :thanks rand-nth (out "@" user " ")))
 
-    #"シル(さん)?.*(vim|Vim)"
+    #"シル(さん)?.*(vim|Vim).*テスト"
     (fn [& _]
-      (->> (if (:latest? (check-vim-version)) :new-version :no-new-version)
-           (get MESSAGES)
-           rand-nth
-           (out "@" user " ")))))
+      (->> MESSAGES :reply rand-nth (out "@" user " "))
+      (vv/initialize)
+      (some-> (generate-message) out))))
 
 (def syr-schedule
   (js/schedules
     ;; vim-version check
     "0 0 10,13,16,19,22 * * * *"
-    #(when (:latest? (check-vim-version))
-       (-> MESSAGES :new-version rand-nth out))))
+    #(when-let [msg (generate-message)]
+       (-> MESSAGES :new-version rand-nth (out "\n" msg)))))

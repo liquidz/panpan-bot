@@ -7,6 +7,10 @@
 (def ^:const URL  "http://ftp.vim.org/pub/vim/patches/7.4/README")
 (def ^:const KEY  "vim-patch")
 
+(defn initialize
+  []
+  (jb/set KEY nil))
+
 (defn get-latest-patch
   []
   (-> URL client/get :body str/split-lines last str/trim
