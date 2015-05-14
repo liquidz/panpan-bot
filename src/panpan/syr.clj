@@ -42,7 +42,7 @@
            "```"))))
 
 (defn syr-handler
-  "シル(さん)?.+(vim|Vim) - Vim の最新バージョンをチェック
+  "シル(さん)?.*(vim|Vim).*テスト - Vim のバージョンチェックテスト
   "
   [{:keys [user] :as arg}]
   (jh/regexp arg
