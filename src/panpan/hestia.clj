@@ -82,7 +82,7 @@
   "
   [{:keys [user] :as arg}]
   (jh/regexp arg
-    #"^(.+?)\s*(を)?(開始|始める|はじめる)"
+    #"^(.+?)\s*(を)?(開始|始め|はじめ)"
     (matchfn [desc]
       (toggl/start-entry desc :pid (desc->pid desc))
       (->> MESSAGES :start-entry rand-nth (out "@" user " ")))
