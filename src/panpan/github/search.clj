@@ -4,8 +4,11 @@
     [clj-http.client   :as client]
     [clojure.data.json :as json]))
 
-(def ^:const SEARCH_API
+(def ^:const SEARCH_ISSUE
   "https://api.github.com/search/issues")
+
+(def ^:const SEARCH_REPOSITORY
+  "https://api.github.com/search/repositories")
 
 (defn- parse-json
   [s]
@@ -23,7 +26,7 @@
   (some->> {:assignee username}
            (merge option)
            map->query
-           (str SEARCH_API "?q=")
+           (str SEARCH_ISSUE "?q=")
            client/get
            :body
            parse-json
