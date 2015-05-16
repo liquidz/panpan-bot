@@ -46,10 +46,11 @@
           (assoc :sec (-> (- now from) (/ 1000) int))))))
 
 (defn start-entry
-  [desc]
-  (let [url  (str API_URL "/start")
-        body {:time_entry {:description desc :created_with "panpan"}}]
-
+  [desc & {:keys [pid]}]
+  (let [url   (str API_URL "/start")
+        entry (-> {:description desc :created_with "panpan"}
+                  (merge (if pid {:pid pid} {})))
+        body  {:time_entry entry}]
     (some-> (call-api url :method "POST" :body body)
             :body
             (json/read-str :key-fn keyword)
@@ -86,3 +87,17 @@
             (json/read-str :key-fn keyword)
             reverse
             first)))
+
+(defn get-workspaces
+  []
+  (-> "https://www.toggl.com/api/v8/workspaces"
+      call-api
+      :body
+      (json/read-str :key-fn keyword)))
+
+(defn get-projects
+  [workspace-id]
+  (-> (str "https://www.toggl.com/api/v8/workspaces/" workspace-id "/projects")
+      call-api
+      :body
+      (json/read-str :key-fn keyword)))
