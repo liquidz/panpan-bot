@@ -18,19 +18,20 @@
 
 (defn call-api
   [url & {:keys [method body query]}]
-  (let [header (-> {:basic-auth [token "api_token"] :content-type :json}
-                   (merge (if body  {:body (json/write-str body)} {})
-                          (if query {:query-params query} {})))
-        method (case method
-                 "POST"   client/post
-                 "PUT"    client/put
-                 "DELETE" client/delete
-                 client/get)]
-    (try
-      (method url header)
-      (catch Exception e
-    ;    (.printStackTrace e)
-        nil))))
+  (when token
+    (let [header (-> {:basic-auth [token "api_token"] :content-type :json}
+                     (merge (if body  {:body (json/write-str body)} {})
+                            (if query {:query-params query} {})))
+          method (case method
+                   "POST"   client/post
+                   "PUT"    client/put
+                   "DELETE" client/delete
+                   client/get)]
+      (try
+        (method url header)
+        (catch Exception e
+          ;    (.printStackTrace e)
+          nil)))))
 
 (defn get-running-entry
   []

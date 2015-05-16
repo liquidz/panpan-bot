@@ -90,7 +90,8 @@
     (matchfn []
       (when-let [entry (toggl/get-last-entry)]
         (hestia-handler
-          (assoc arg :text (str (:description entry) "開始")))))
+          (assoc arg :text (str (:description entry) "開始")))
+        nil))
     #"^(終了|終わった|おわった|おわた)"
     (matchfn []
       (when (toggl/stop-entry)
@@ -105,7 +106,8 @@
     #"^(神様|神さま).*(休憩|一休み)"
     (matchfn []
       (->> MESSAGES :start-rest rand-nth (out "@" user " "))
-      (toggl/start-entry "休憩" :pid REST_PID))
+      (toggl/start-entry "休憩" :pid REST_PID)
+      nil)
 
     #"^(神様|神さま).*ありがと"
     (matchfn []
