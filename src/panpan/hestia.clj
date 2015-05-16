@@ -3,6 +3,7 @@
     [clojure.string    :as str]
     [jubot.adapter     :as ja]
     [jubot.handler     :as jh]
+    [jubot.brain       :as jb]
     [jubot.scheduler   :as js]
     [panpan.util.match :refer :all]
     [panpan.toggl.api  :as toggl]))
@@ -16,6 +17,7 @@
 (def ^:const REST_PID "3141045")
 (def ^:const WARN_SEC (* 25 60)) ; 25 min
 (def ^:const REST_WARN_SEC (* 5 60)) ; 5 min
+(def ^:const RUNNING_KEY "toggl_running")
 
 
 (def ^:const MESSAGES ; {{{
@@ -85,6 +87,7 @@
     #"^(.+?).*(を)?(開始|始め|はじめ)"
     (matchfn [desc]
       (toggl/start-entry desc :pid (desc->pid desc))
+      (jb/set RUNNING_KEY "true")
       (->> MESSAGES :start-entry rand-nth (out "@" user " ")))
     #"^(再開|さいかい)"
     (matchfn []
@@ -95,10 +98,12 @@
     #"^(終了|終わった|おわった|おわた)"
     (matchfn []
       (when (toggl/stop-entry)
+        (jb/set RUNNING_KEY nil)
         (->> MESSAGES :stop-entry rand-nth (out "@" user " "))))
     #"^(神様|神さま).*(違い|違う|消して|けして)"
     (matchfn []
       (let [key (if (toggl/delete-entry) :delete-entry :no-entry-to-delete)]
+        (jb/set RUNNING_KEY nil)
         (->> MESSAGES
              key
              rand-nth
@@ -106,6 +111,7 @@
     #"^(神様|神さま).*(休憩|一休み)"
     (matchfn []
       (->> MESSAGES :start-rest rand-nth (out "@" user " "))
+      (jb/set RUNNING_KEY "true")
       (toggl/start-entry "休憩" :pid REST_PID)
       nil)
 
@@ -129,11 +135,12 @@
 (def hestia-schedule
   (js/schedules
     "0 /5 * * * * *"
-    #(when-let [{:keys [pid sec]} (toggl/get-running-entry)]
-       (cond
-         (and (= (str pid) REST_PID) (> sec REST_WARN_SEC))
-         (->> MESSAGES :rest-warn rand-nth (out "@uochan "))
+    #(when (jb/get RUNNING_KEY)
+       (when-let [{:keys [pid sec]} (toggl/get-running-entry)]
+         (cond
+           (and (= (str pid) REST_PID) (> sec REST_WARN_SEC))
+           (->> MESSAGES :rest-warn rand-nth (out "@uochan "))
 
-         (> sec WARN_SEC)
-         (->> MESSAGES :warn rand-nth (out "@uochan "))))
+           (> sec WARN_SEC)
+           (->> MESSAGES :warn rand-nth (out "@uochan ")))))
     ))
