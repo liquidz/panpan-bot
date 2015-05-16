@@ -10,6 +10,7 @@
                  [clj-http "1.1.2"]
                  [clj-docomo-dialogue "0.0.3"]
                  [org.clojure/data.json "0.2.6"]
+                 [clj-time "0.9.0"]
                  [jubot "0.1.1"]]
 
   :uberjar-name "panpan-standalone.jar"
