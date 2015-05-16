@@ -74,15 +74,15 @@
     (fn [& _] "8256158"))) ; }}}
 
 (defn hestia-handler
-  "^(.+?)\\s*(を)?(開始|始め|はじめ)     - toggl開始
-   ^(再開|さいかい)                     - toggl再開
-   ^(終了|終わった|おわった|おわた)     - toggl停止
-   ^(神様|神さま).*違(い|う)            - toggl削除
-   ^(神様|神さま).*(休憩|一休み)        - toggl休憩エントリー開始
+  "^(.+?).*(を)?(開始|始め|はじめ)           - toggl開始
+   ^(再開|さいかい)                          - toggl再開
+   ^(終了|終わった|おわった|おわた)          - toggl停止
+   ^(神様|神さま).*(違い|違う|消して|けして) - toggl削除
+   ^(神様|神さま).*(休憩|一休み)             - toggl休憩エントリー開始
   "
   [{:keys [user] :as arg}]
   (jh/regexp arg
-    #"^(.+?)\s*(を)?(開始|始め|はじめ)"
+    #"^(.+?).*(を)?(開始|始め|はじめ)"
     (matchfn [desc]
       (toggl/start-entry desc :pid (desc->pid desc))
       (->> MESSAGES :start-entry rand-nth (out "@" user " ")))
@@ -96,7 +96,7 @@
     (matchfn []
       (when (toggl/stop-entry)
         (->> MESSAGES :stop-entry rand-nth (out "@" user " "))))
-    #"^(神様|神さま).*違(い|う)"
+    #"^(神様|神さま).*(違い|違う|消して|けして)"
     (matchfn []
       (let [key (if (toggl/delete-entry) :delete-entry :no-entry-to-delete)]
         (->> MESSAGES
