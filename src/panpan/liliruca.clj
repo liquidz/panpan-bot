@@ -3,7 +3,12 @@
     [jubot.adapter        :as ja]
     [jubot.handler        :as jh]
     [jubot.scheduler      :as js]
-    [panpan.jubot.version :refer :all]))
+    [panpan.util.match    :refer :all]
+    [panpan.jubot.version :refer :all]
+    [panpan.trello.api    :as trello]))
+
+(def ^:private private-todo (System/getenv "TRELLO_PRIVATE_TODO"))
+(def ^:private work-todo (System/getenv "TRELLO_WORK_TODO"))
 
 (def ^:const NAME "リリ")
 (def ^:const ICON "https://dl.dropboxusercontent.com/u/14918307/slack_icon/liliruca.png")
@@ -22,13 +27,29 @@
     "滅相もないです"
     "サポーターですから！"
     ]
+   :add-task
+   ["予定にいれておきますね"
+    "あ、それ登録しておきますね"
+    "早速登録しておきましたよ"
+    ]
    })
 
 (defn liliruca-handler
-  "リリ.*jubot.+テスト - jubot ドキュメントバージョンチェックのテスト
+  "^task\\s+(.+?)$     - 個人タスクに追加
+   ^work\\s+(.+?)$     - ワークタスクに追加
+   リリ.*jubot.+テスト - jubot ドキュメントバージョンチェックのテスト
   "
   [{:keys [user] :as arg}]
   (jh/regexp arg
+    #"^task\s+(.+?)$"
+    (matchfn [text]
+      (when (trello/add-card private-todo text)
+        (->> MESSAGES :add-task rand-nth (out "@" user " "))))
+    #"^work\s+(.+?)$"
+    (matchfn [text]
+      (when (trello/add-card work-todo text)
+        (->> MESSAGES :add-task rand-nth (out "@" user " "))))
+
     #"リリ.*jubot.+テスト"
     (fn [& _]
       (out "@" user " 了解です")
