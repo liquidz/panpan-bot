@@ -48,8 +48,9 @@
   (stub-500-error
     (is (nil? (delete-entry "id")))))
 
-(deftest get-last-entry-test
+(deftest get-last-entries-test
   (stub-toggl-api [{:id "1"} {:id "2"}]
-    (is (= "2" (:id (get-last-entry)))))
+    (is (= ["2"] (map :id (get-last-entries))))
+    (is (= ["2" "1"] (map :id (get-last-entries 2)))))
   (stub-500-error
-    (is (nil? (get-last-entry)))))
+    (is (nil? (get-last-entries)))))

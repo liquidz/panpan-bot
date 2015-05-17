@@ -13,8 +13,8 @@
 (def ^:private out #(do (ja/out (apply str %&) :as NAME :icon-url ICON) nil))
 (def ^:private pre #(str "```\n" % "\n```")) ; }}}
 
-(def ^:const WORKSPACE_ID "141468")
-(def ^:const REST_PID "3141045")
+(def ^:const WORKSPACE_ID 141468)
+(def ^:const REST_PID 3141045)
 (def ^:const WARN_SEC (* 25 60)) ; 25 min
 (def ^:const REST_WARN_SEC (* 5 60)) ; 5 min
 (def ^:const RUNNING_KEY "toggl_running")
@@ -31,7 +31,7 @@
     ]
    :delete-entry
    ["おっと、了解だよ！"
-    "おっとゴメンよ！"
+    "おっと了解！"
     ]
    :no-entry-to-delete
    ["ん？何が違うんだい？"]
@@ -43,11 +43,11 @@
     ]
    :rest-warn
    ["そろそろ休憩終わりじゃないかい？"
-    "いつまで休んでるんだい？"
+    "そろそろ作業に戻るかい？"
     ]
    :warn
    ["そろそろ休憩したらどうだい？"
-    "集中できてるかい？"
+    "適度に休憩しないと集中できないぞ？"
     ]
    :thanks
    ["どういたしまして！"
@@ -75,32 +75,36 @@
     #".*"
     (fn [& _] "8256158"))) ; }}}
 
+(defn- running? [] (some? (jb/get RUNNING_KEY)))
+
 (defn hestia-handler
-  "^(.+?).*(を)?(開始|始め|はじめ)           - toggl開始
+  "^(.+?)\\s*(を)?(開始|始め|はじめ)          - toggl開始
    ^(再開|さいかい)                          - toggl再開
-   ^(終了|終わった|おわった|おわた)          - toggl停止
-   ^(神様|神さま).*(違い|違う|消して|けして) - toggl削除
+   (終了|終わ|おわた|完了)$                  - toggl停止
+   ^(神様|神さま).*(違い|違う|消して|削除)   - toggl削除
    ^(神様|神さま).*(休憩|一休み)             - toggl休憩エントリー開始
   "
   [{:keys [user] :as arg}]
   (jh/regexp arg
-    #"^(.+?).*(を)?(開始|始め|はじめ)"
+    #"^(.+?)\s*(を)?(開始|始め|はじめ)"
     (matchfn [desc]
       (toggl/start-entry desc :pid (desc->pid desc))
       (jb/set RUNNING_KEY "true")
       (->> MESSAGES :start-entry rand-nth (out "@" user " ")))
     #"^(再開|さいかい)"
     (matchfn []
-      (when-let [entry (toggl/get-last-entry)]
+      (when-let [entry (some->> (toggl/get-last-entries 2)
+                                (drop-while #(= REST_PID (:pid %)))
+                                first)]
         (hestia-handler
           (assoc arg :text (str (:description entry) "開始")))
         nil))
-    #"^(終了|終わった|おわった|おわた)"
+    #"(終了|終わ|おわた|完了)$"
     (matchfn []
-      (when (toggl/stop-entry)
+      (when (and (running?) (toggl/stop-entry))
         (jb/set RUNNING_KEY nil)
         (->> MESSAGES :stop-entry rand-nth (out "@" user " "))))
-    #"^(神様|神さま).*(違い|違う|消して|けして)"
+    #"^(神様|神さま).*(違い|違う|消して|削除)"
     (matchfn []
       (let [key (if (toggl/delete-entry) :delete-entry :no-entry-to-delete)]
         (jb/set RUNNING_KEY nil)
@@ -135,12 +139,22 @@
 (def hestia-schedule
   (js/schedules
     "0 /5 * * * * *"
-    #(when (jb/get RUNNING_KEY)
+    #(when (running?)
        (when-let [{:keys [pid sec]} (toggl/get-running-entry)]
          (cond
-           (and (= (str pid) REST_PID) (> sec REST_WARN_SEC))
+           (and (= pid REST_PID) (> sec REST_WARN_SEC))
            (->> MESSAGES :rest-warn rand-nth (out "@uochan "))
 
            (> sec WARN_SEC)
            (->> MESSAGES :warn rand-nth (out "@uochan ")))))
     ))
+
+;(defn test-handler
+;  [arg]
+;  (jh/regexp arg
+;    #"kamitest" (fn [& _]
+;                  (jb/set RUNNING_KEY "true")
+;                  ((first hestia-schedule))
+;                  (jb/set RUNNING_KEY nil)
+;                  nil
+;                  )))

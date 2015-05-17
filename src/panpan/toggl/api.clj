@@ -76,18 +76,20 @@
            :status
            (= 200))))
 
-(defn get-last-entry
-  []
-  (let [to    (c/now)
-        from  (c/minus to (c/hours 5))
-        query {"start_date" (cf/unparse date-format from)
-               "end_date"   (cf/unparse date-format to)}]
-    (some-> API_URL
-            (call-api :query query)
-            :body
-            (json/read-str :key-fn keyword)
-            reverse
-            first)))
+(defn get-last-entries
+  ([] (get-last-entries 1))
+  ([n]
+   (let [to    (c/now)
+         from  (c/minus to (c/hours 5))
+         query {"start_date" (cf/unparse date-format from)
+                "end_date"   (cf/unparse date-format to)}
+         take* (partial take n)]
+     (some-> API_URL
+             (call-api :query query)
+             :body
+             (json/read-str :key-fn keyword)
+             reverse
+             take*))))
 
 (defn get-workspaces
   []
