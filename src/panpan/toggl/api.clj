@@ -2,12 +2,9 @@
   (:require
     [clj-http.client   :as client]
     [clojure.data.json :as json]
-    ;[clj-time.format :refer [formatter parse]]
-    [clj-time.core :as c]
-    [clj-time.format :as cf]
-    [clj-time.coerce :as cc]
-    ))
-
+    [clj-time.core     :as c]
+    [clj-time.format   :as cf]
+    [clj-time.coerce   :as cc]))
 
 (def ^:const API_URL "https://www.toggl.com/api/v8/time_entries")
 (def ^:const TOKEN_KEY "TOGGL_TOKEN")
@@ -30,7 +27,6 @@
       (try
         (method url header)
         (catch Exception e
-          ;    (.printStackTrace e)
           nil)))))
 
 (defn get-running-entry

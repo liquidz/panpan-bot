@@ -18,7 +18,7 @@
 (def ^:const WARN_SEC (* 25 60)) ; 25 min
 (def ^:const REST_WARN_SEC (* 5 60)) ; 5 min
 (def ^:const RUNNING_KEY "toggl_running")
-
+(def ^:const STOP_WARN_KEY "toggl_stop_warn")
 
 (def ^:const MESSAGES ; {{{
   {:start-entry
@@ -49,6 +49,10 @@
    ["そろそろ休憩したらどうだい？"
     "適度に休憩しないと集中できないぞ？"
     ]
+   :stop-warn
+   ["(わかったよ)"
+    "(了解だよ)"
+    ]
    :thanks
    ["どういたしまして！"
     "君のためだからね！"
@@ -76,6 +80,7 @@
     (fn [& _] "8256158"))) ; }}}
 
 (defn- running? [] (some? (jb/get RUNNING_KEY)))
+(defn- warn? [] (nil? (jb/get STOP_WARN_KEY)))
 
 (defn hestia-handler
   "^(.+?)\\s*(を)?(開始|始め|はじめ)          - toggl開始
@@ -90,6 +95,7 @@
     (matchfn [desc]
       (toggl/start-entry desc :pid (desc->pid desc))
       (jb/set RUNNING_KEY "true")
+      (jb/set STOP_WARN_KEY nil)
       (->> MESSAGES :start-entry rand-nth (out "@" user " ")))
     #"^(再開|さいかい)"
     (matchfn []
@@ -103,11 +109,13 @@
     (matchfn []
       (when (and (running?) (toggl/stop-entry))
         (jb/set RUNNING_KEY nil)
+        (jb/set STOP_WARN_KEY nil)
         (->> MESSAGES :stop-entry rand-nth (out "@" user " "))))
     #"^(神様|神さま).*(違い|違う|消して|削除)"
     (matchfn []
       (let [key (if (toggl/delete-entry) :delete-entry :no-entry-to-delete)]
         (jb/set RUNNING_KEY nil)
+        (jb/set STOP_WARN_KEY nil)
         (->> MESSAGES
              key
              rand-nth
@@ -116,8 +124,14 @@
     (matchfn []
       (->> MESSAGES :start-rest rand-nth (out "@" user " "))
       (jb/set RUNNING_KEY "true")
+      (jb/set STOP_WARN_KEY nil)
       (toggl/start-entry "休憩" :pid REST_PID)
       nil)
+    #"^(神様|神さま).*(静か)"
+    (matchfn []
+      (when (running?)
+        (jb/set STOP_WARN_KEY "true")
+        (->> MESSAGES :stop-warn rand-nth (out "@" user " "))))
 
     #"^(神様|神さま).*ありがと"
     (matchfn []
@@ -139,7 +153,7 @@
 (def hestia-schedule
   (js/schedules
     "0 /5 * * * * *"
-    #(when (running?)
+    #(when (and (running?) (warn?))
        (when-let [{:keys [pid sec]} (toggl/get-running-entry)]
          (cond
            (and (= pid REST_PID) (> sec REST_WARN_SEC))
