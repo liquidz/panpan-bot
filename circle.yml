@@ -1,0 +1,5 @@
+deployment:
+  master:
+    branch: master
+    commands:
+      - curl -H "Content-Type: application/json" --data '{"build": true}' -X POST "https://registry.hub.docker.com/u/uochan/panpan/trigger/$DOCKERHUB_TOKEN/"
