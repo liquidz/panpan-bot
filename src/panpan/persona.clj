@@ -43,7 +43,7 @@
   [{:keys [text message-for-me?] :as arg}]
   (when message-for-me?
     (handler/regexp arg
-      #"ping"              (constantly "pong")
+      #"ping"              (constantly "pong!!!")
       #"^set (.+?) (.+?)$" (fn [{[_ k v] :match}] (brain/set k v) "OK")
       #"^get (.+?)$"       (fn [{[_ k]   :match}] (brain/get k))
       #"^brain$"           brain-key-values
