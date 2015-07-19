@@ -1,4 +1,4 @@
-FROM clojure
+FROM uochan/panpan-base
 MAINTAINER uochan
 
 COPY . /app

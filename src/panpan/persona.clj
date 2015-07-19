@@ -3,6 +3,8 @@
     [clojure.string  :as str]
     [jubot.handler   :as handler]
     [jubot.brain     :as brain]
+    [clj-time.core   :as tt]
+    [clj-time.format :as tf]
     [clj-docomo-dialogue.core :as dd]))
 
 (def ^:const CONTEXT_KEY "docomo_dialogue_context")
@@ -43,7 +45,8 @@
   [{:keys [text message-for-me?] :as arg}]
   (when message-for-me?
     (handler/regexp arg
-      #"ping"              (constantly "pong!!!")
+      #"ping"              (constantly "pong")
+      #"date"              (fn [& _] (str (tt/now)))
       #"^set (.+?) (.+?)$" (fn [{[_ k v] :match}] (brain/set k v) "OK")
       #"^get (.+?)$"       (fn [{[_ k]   :match}] (brain/get k))
       #"^brain$"           brain-key-values
