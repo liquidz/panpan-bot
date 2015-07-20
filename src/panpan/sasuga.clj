@@ -14,7 +14,7 @@
 (defn sasuga-handler
   [{:keys [user] :as arg}]
   (jh/regexp arg
-    #"^s$"
+    #"^sasuga"
     (fn [& _]
       (let [i (get-sasuga-count)]
         (jb/set SASUGA_KEY (inc i))
@@ -24,5 +24,6 @@
   (js/schedules
     "0 0 9 * * * *"
     (fn [& _]
-      (str "昨日は " (get-sasuga-count) "さすが だったよ")
-      (jb/set SASUGA_KEY 0))))
+      (let [i (get-sasuga-count)]
+        (jb/set SASUGA_KEY 0)
+        (str "昨日は " i "さすが だったよ")))))
