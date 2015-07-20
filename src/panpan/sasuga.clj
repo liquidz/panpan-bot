@@ -12,6 +12,8 @@
   (if-let [i (jb/get SASUGA_KEY)] i 0))
 
 (defn sasuga-handler
+  "sasuga - さすが俺
+  "
   [{:keys [user] :as arg}]
   (jh/regexp arg
     #"^sasuga"
